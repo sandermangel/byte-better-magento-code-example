@@ -6,12 +6,18 @@ use Byte\User\Object as UserObject;
 use Byte\User\ObjectInterface as UserObjectInterface;
 use Byte\User\Validation as UserValidation;
 use Byte\User\Output\CsvRow as UserOutputCsv;
+use Byte\User\Output\OutputInterface as UserOutputInterface;
+use Byte\DiContainer;
 
-$pdo = new PDO('mysql:host=localhost;dbname=database', 'username', 'password');
+$di = new DiContainer(
+    new PDO('mysql:host=localhost;dbname=database', 'username', 'password')
+    , UserOutputCsv::class
+);
 
-$statement = $pdo->prepare('SELECT firstname, lastname, email, phone, country FROM new_users');
+$statement = $di->getDbl()->prepare('SELECT firstname, lastname, email, phone, country FROM new_users');
 $statement->execute();
 
+$outputClass = $di->getOutputClass();
 /** @var UserObjectInterface $user */
 while ($user = $statement->fetchObject(UserObject::class)) {
     // validate the User object data
@@ -23,9 +29,10 @@ while ($user = $statement->fetchObject(UserObject::class)) {
         continue;
     }
 
-    $output = new UserOutputCsv($user);
+    /** @var UserOutputInterface $output */
+    $output = new $outputClass($user);
     $output->write();
 
-    $statement = $pdo->prepare('DELETE FROM new_users WHERE email = ?');
+    $statement = $di->getDbl()->prepare('DELETE FROM new_users WHERE email = ?');
     $statement->execute([$row['email']]);
 }
