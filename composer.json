@@ -1,0 +1,11 @@
+{
+    "name": "byte/codesnippet",
+    "license": "MIT",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Byte\\": "src/Byte/"
+        }
+    },
+    "optimize-autoloader": true
+}
