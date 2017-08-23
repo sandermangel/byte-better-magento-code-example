@@ -2,7 +2,7 @@
 
 namespace Byte\User;
 
-class Object
+class Object implements ObjectInterface
 {
     private $varFirstname;
     private $varLastname;

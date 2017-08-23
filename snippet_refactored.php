@@ -3,6 +3,8 @@
 require __DIR__ . '/vendor/autoload.php';
 
 use Byte\User\Object as UserObject;
+use Byte\User\ObjectInterface as UserObjectInterface;
+use Byte\User\Validation as UserValidation;
 
 $pdo = new PDO('mysql:host=localhost;dbname=database', 'username', 'password');
 
@@ -11,15 +13,14 @@ $handle = fopen('data.csv', 'wb+');
 $statement = $pdo->prepare('SELECT firstname, lastname, email, phone, country FROM new_users');
 $statement->execute();
 
-/** @var UserObject $user */
+/** @var UserObjectInterface $user */
 while ($user = $statement->fetchObject(UserObject::class)) {
-    if (
-        !strlen($user->getFirstname()) ||
-        !strlen($user->getLastname()) ||
-        !filter_var($user->getEmail(), FILTER_VALIDATE_EMAIL) ||
-        !filter_var($user->getPhone(), FILTER_VALIDATE_INT) ||
-        strlen($user->getCountry())!==2
-    ) {
+    // validate the User object data
+    try {
+        $validation = new UserValidation($user);
+        $validation->validateAll();
+    } catch(InvalidArgumentException $error) {
+        echo $error->getMessage() . PHP_EOL;
         continue;
     }
 
