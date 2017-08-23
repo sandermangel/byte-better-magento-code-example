@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: sander
- * Date: 23-8-17
- * Time: 16:05
- */
 
 namespace Byte\User;
 

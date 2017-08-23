@@ -2,6 +2,8 @@
 
 namespace Byte\User;
 
+use Byte\User\ObjectInterface as UserObjectInterface;
+
 class Validation
 {
     private $user;
@@ -9,9 +11,9 @@ class Validation
     /**
      * Validate data in a user object
      *
-     * @param ObjectInterface $user
+     * @param UserObjectInterface $user
      */
-    public function __construct(ObjectInterface $user)
+    public function __construct(UserObjectInterface $user)
     {
         $this->user = $user;
     }
