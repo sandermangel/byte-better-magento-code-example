@@ -2,6 +2,8 @@
 
 require __DIR__ . '/vendor/autoload.php';
 
+use Byte\User\Object as UserObject;
+
 $pdo = new PDO('mysql:host=localhost;dbname=database', 'username', 'password');
 
 $handle = fopen('data.csv', 'wb+');
@@ -9,22 +11,23 @@ $handle = fopen('data.csv', 'wb+');
 $statement = $pdo->prepare('SELECT firstname, lastname, email, phone, country FROM new_users');
 $statement->execute();
 
-while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+/** @var UserObject $user */
+while ($user = $statement->fetchObject(UserObject::class)) {
     if (
-        !strlen($row['firstname']) ||
-        !strlen($row['lastname']) ||
-        !filter_var($row['email'], FILTER_VALIDATE_EMAIL) ||
-        !filter_var($row['phone'], FILTER_VALIDATE_INT) ||
-        strlen($row['country'])!==2
+        !strlen($user->getFirstname()) ||
+        !strlen($user->getLastname()) ||
+        !filter_var($user->getEmail(), FILTER_VALIDATE_EMAIL) ||
+        !filter_var($user->getPhone(), FILTER_VALIDATE_INT) ||
+        strlen($user->getCountry())!==2
     ) {
         continue;
     }
 
     fputcsv($handle, [
-        $row['firstname'] . ' ' . $row['lastname'],
-        $row['country'],
-        $row['email'],
-        $row['phone'],
+        $user->getFirstname() . ' ' . $user->getLastname(),
+        $user->getCountry(),
+        $user->getEmail(),
+        $user->getPhone(),
     ], ';', '""');
 
     $statement = $pdo->prepare('DELETE FROM new_users WHERE email = ?');
