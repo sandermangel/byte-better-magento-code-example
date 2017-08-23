@@ -34,7 +34,7 @@ class CsvRow implements UserOutputInterface
             $this->user->getCountry(),
             $this->user->getEmail(),
             $this->user->getPhone(),
-        ], ';', '""');
+        ], ';', '"');
 
         fclose($handle);
     }

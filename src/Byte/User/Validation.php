@@ -23,7 +23,7 @@ class Validation
      *
      * @throws \InvalidArgumentException
      */
-    public function validateAll()
+    public function __invoke()
     {
         if ($this->user->getFirstname() === '') {
             throw new \InvalidArgumentException('Firstname should be at least 1 character long');
@@ -34,7 +34,7 @@ class Validation
         if (!filter_var($this->user->getEmail(), FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException('Email address does not appear to be valid');
         }
-        if (!filter_var($this->user->getPhone(), FILTER_VALIDATE_INT)) {
+        if (!is_numeric($this->user->getPhone())) {
             throw new \InvalidArgumentException('Phone number should be numeric');
         }
         if (strlen($this->user->getCountry())!==2) {

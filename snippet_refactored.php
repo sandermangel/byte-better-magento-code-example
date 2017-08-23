@@ -6,6 +6,7 @@ use Byte\User\ObjectInterface as UserObjectInterface;
 use Byte\User\Validation as UserValidation;
 use Byte\User\Output\CsvRow as UserOutputCsv;
 use Byte\User\Output\OutputInterface as UserOutputInterface;
+use Byte\User\Delete as DeleteUser;
 use Byte\DiContainer;
 use Byte\User\NewUserCollection;
 
@@ -14,11 +15,12 @@ $di = new DiContainer(
     , UserOutputCsv::class
 );
 
+// We could also move the anonymous function to it's own class or method
+// but just for demo purposes I'll leave it in here
 $collection = new NewUserCollection($di, function(UserObjectInterface $user, $index, DiContainer $di) {
     // validate the row
     try {
-        $validation = new UserValidation($user);
-        $validation->validateAll();
+        (new UserValidation($user))();
     } catch(InvalidArgumentException $error) {
         echo $error->getMessage() . PHP_EOL;
         return;
@@ -30,8 +32,7 @@ $collection = new NewUserCollection($di, function(UserObjectInterface $user, $in
     $output = new $outputClass($user);
     $output->write();
 
-    $statement = $di->getDbl()->prepare('DELETE FROM new_users WHERE email = ?');
-    $statement->execute([$row['email']]);
+    (new DeleteUser($user, $di))();
 });
 
 $collection->processNewUsers();
