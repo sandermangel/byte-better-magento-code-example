@@ -4,67 +4,69 @@ namespace Byte\User;
 
 class Object
 {
-    private $firstname;
-    private $lastname;
-    private $email;
-    private $phone;
-    private $country;
+    private $varFirstname;
+    private $varLastname;
+    private $varEmail;
+    private $varPhone;
+    private $varCountry;
 
     /**
-     * Instantiate the User Object
+     * Setter to hydrate an object
      *
-     * @param string $firstname
-     * @param string $lastname
-     * @param string $email
-     * @param string $phone
-     * @param string $country
+     * Normally I would prefer using the constructor to make the object immutable
+     * but PDO won't work with that.
+     *
+     * @param string $name
+     * @param mixed $value
      */
-    public function __construct(string $firstname, string $lastname, string $email, string $phone, string $country)
+    public function __set(string $name, $value)
     {
-        $this->firstname = $firstname;
-        $this->lastname = $lastname;
-        $this->email = $email;
-        $this->phone = $phone;
-        $this->country = $country;
+        $name = 'var' . ucfirst($name);
+        $this->$name = $value;
     }
 
     /**
+     * User first name
      * @return string
      */
     public function getFirstname(): string
     {
-        return $this->firstname;
+        return $this->varFirstname;
     }
 
     /**
+     * User lastname
      * @return string
      */
     public function getLastname(): string
     {
-        return $this->lastname;
+        return $this->varLastname;
     }
 
     /**
+     * User email address
      * @return string
      */
     public function getEmail(): string
     {
-        return $this->email;
+        return $this->varEmail;
     }
 
     /**
+     * User phone number
      * @return string
      */
     public function getPhone(): string
     {
-        return $this->phone;
+        return $this->varPhone;
     }
 
     /**
+     * User country code
      * @return string
      */
     public function getCountry(): string
     {
-        return $this->country;
+        return $this->varCountry;
     }
 }
